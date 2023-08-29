@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import com.mis.route.todo.Constants
 import com.mis.route.todo.database.AppDatabase
 import com.mis.route.todo.database.model.TaskEntity.Companion.toTaskList
 import com.mis.route.todo.databinding.FragmentTasksListBinding
@@ -35,9 +36,22 @@ class TasksListFragment : Fragment() {
                 Toast.makeText(context, tasksList!![position].title, Toast.LENGTH_SHORT).show()
             }
         }
+
         adapter.onTaskDeleteClickListener = TasksAdapter.OnTaskClickListener { position ->
             deleteTask(tasksList?.get(position))
             adapter.notifyItemRemoved(position)
+        }
+
+        adapter.onTaskCheckedClickListener = TasksAdapter.OnTaskClickListener { position ->
+            tasksList?.let {
+                val newTask = tasksList!![position]
+                newTask.status = Constants.COMPLETE
+                AppDatabase.getInstance(requireContext().applicationContext)
+                    .tasksDao().updateTask(newTask.toTaskEntity())
+                tasksList!![position] = newTask
+                adapter.tasksList!![position] = newTask
+                adapter.notifyItemChanged(position)
+            }
         }
         binding.tasksRecycler.adapter = adapter
 
