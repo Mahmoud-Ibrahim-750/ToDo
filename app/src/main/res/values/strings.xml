@@ -9,4 +9,5 @@
     <string name="task_name">Task Name</string>
     <string name="date">Date:</string>
     <string name="add_task">Add Task</string>
+    <string name="delete">delete</string>
 </resources>
