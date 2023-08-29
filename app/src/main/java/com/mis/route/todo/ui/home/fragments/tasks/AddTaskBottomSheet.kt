@@ -1,4 +1,4 @@
-package com.mis.route.todo.ui.home
+package com.mis.route.todo.ui.home.fragments.tasks
 
 import android.app.DatePickerDialog
 import android.os.Build
@@ -7,7 +7,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
-import androidx.core.content.ContentProviderCompat.requireContext
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.mis.route.todo.Constants
 import com.mis.route.todo.database.AppDatabase
@@ -18,7 +17,7 @@ import java.util.Calendar
 import java.util.Locale
 
 class AddTaskBottomSheet : BottomSheetDialogFragment() {
-    lateinit var binding: BottomSheetAddTaskBinding
+    private lateinit var binding: BottomSheetAddTaskBinding
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -44,8 +43,21 @@ class AddTaskBottomSheet : BottomSheetDialogFragment() {
             showDatePickerDialog()
         }
         binding.addTaskButton.setOnClickListener {
+            if (!invalidateInput()) return@setOnClickListener
             addTask()
+            onTaskAddedListener.onTaskAdded() // to reload tasks (to notify the adapter)
+            dismiss()
         }
+    }
+
+    private fun addTask() {
+        AppDatabase.getInstance(requireContext().applicationContext)
+            .tasksDao().addTask(
+                TaskEntity(
+                    title = binding.inputTaskTitle.text.toString(),
+                    date = binding.dateSelector.text.toString(),
+                    status = Constants.INCOMPLETE)
+            )
     }
 
     private fun displayCurrentDate() {
@@ -64,15 +76,9 @@ class AddTaskBottomSheet : BottomSheetDialogFragment() {
         datePickerDialog.show()
     }
 
-    private fun addTask() {
-        if (invalidateInput()) {
-            AppDatabase.getInstance(requireContext().applicationContext)
-                .tasksDao().addTask(
-                    TaskEntity(
-                        title = binding.inputTaskTitle.text.toString(),
-                        date = binding.dateSelector.text.toString(),
-                        status = Constants.INCOMPLETE))
-        }
-        dismiss()
+    lateinit var onTaskAddedListener: OnTaskAddedListener
+
+    fun interface OnTaskAddedListener {
+        fun onTaskAdded()
     }
 }

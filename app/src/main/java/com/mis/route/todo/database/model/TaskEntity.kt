@@ -7,10 +7,11 @@ import com.mis.route.todo.ui.home.fragments.tasks.model.Task
 
 @Entity(tableName = "Tasks")
 data class TaskEntity(
-    @PrimaryKey(autoGenerate = true) val id: Int = -1,
-    @ColumnInfo var title: String,
-    @ColumnInfo var date: String,
-    @ColumnInfo var status: String
+    // TODO: why does 0 works while -1 doesn't? and should it be null instead?
+    @PrimaryKey(autoGenerate = true) val id: Int = 0,
+    @ColumnInfo(name = "title") var title: String,
+    @ColumnInfo(name = "date") var date: String,
+    @ColumnInfo(name = "status") var status: String
 ) {
     companion object {
         fun TaskEntity.toTask(): Task {

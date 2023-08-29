@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.mis.route.todo.databinding.ItemTaskBinding
 import com.mis.route.todo.ui.home.fragments.tasks.model.Task
 
-class TasksAdapter(private val tasksList: MutableList<Task>) : RecyclerView.Adapter<TasksAdapter.ViewHolder>() {
+class TasksAdapter(var tasksList: MutableList<Task>?) : RecyclerView.Adapter<TasksAdapter.ViewHolder>() {
 
     private lateinit var binding: ItemTaskBinding
 
@@ -18,15 +18,15 @@ class TasksAdapter(private val tasksList: MutableList<Task>) : RecyclerView.Adap
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val task = tasksList[position]
-        holder.binding.title.text = task.title
-        holder.binding.time.text = task.date.toString()
+        val task = tasksList?.get(position)
+        holder.binding.title.text = task?.title
+        holder.binding.time.text = task?.date
         holder.binding.checkButton.setOnClickListener {
             taskClickListener.onClick(position)
         }
     }
 
-    override fun getItemCount() = tasksList.size
+    override fun getItemCount() = tasksList?.size ?: 0
 
     lateinit var taskClickListener: OnTaskClickListener
     fun interface OnTaskClickListener {
