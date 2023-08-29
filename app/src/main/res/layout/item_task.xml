@@ -92,7 +92,7 @@
                 android:layout_width="80dp"
                 android:layout_height="35dp"
                 android:src="@drawable/ic_check"
-                android:background="@drawable/shape_check_button"
+                android:background="@drawable/shape_unchecked_button"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
