@@ -18,17 +18,24 @@ class TasksAdapter(var tasksList: MutableList<Task>?) : RecyclerView.Adapter<Tas
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val task = tasksList?.get(position)
-        holder.binding.title.text = task?.title
-        holder.binding.time.text = task?.date
-        holder.binding.checkButton.setOnClickListener {
-            taskClickListener.onClick(position)
+        tasksList?.let {
+            val task = tasksList!![position]
+            holder.binding.title.text = task.title
+            holder.binding.time.text = task.date
+            holder.binding.checkButton.setOnClickListener {
+                onTaskItemClickListener.onClick(position)
+            }
+            holder.binding.deleteView.setOnClickListener {
+                onTaskDeleteClickListener.onClick(position)
+            }
         }
     }
 
     override fun getItemCount() = tasksList?.size ?: 0
 
-    lateinit var taskClickListener: OnTaskClickListener
+    lateinit var onTaskItemClickListener: OnTaskClickListener
+    lateinit var onTaskDeleteClickListener: OnTaskClickListener
+
     fun interface OnTaskClickListener {
         fun onClick(position: Int)
     }

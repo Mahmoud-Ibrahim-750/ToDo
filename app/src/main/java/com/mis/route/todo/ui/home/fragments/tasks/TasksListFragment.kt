@@ -11,6 +11,7 @@ import com.mis.route.todo.database.model.TaskEntity.Companion.toTaskList
 import com.mis.route.todo.databinding.FragmentTasksListBinding
 import com.mis.route.todo.ui.home.fragments.tasks.adapter.TasksAdapter
 import com.mis.route.todo.ui.home.fragments.tasks.model.Task
+import com.mis.route.todo.ui.home.fragments.tasks.model.Task.Companion.toTaskEntity
 
 class TasksListFragment : Fragment() {
     private lateinit var binding: FragmentTasksListBinding
@@ -28,16 +29,30 @@ class TasksListFragment : Fragment() {
     private val adapter = TasksAdapter(null)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        loadTasks()
-        adapter.tasksList = tasksList
-        adapter.taskClickListener = TasksAdapter.OnTaskClickListener { position ->
-            // TODO: check this task (impl.)
+        adapter.onTaskItemClickListener = TasksAdapter.OnTaskClickListener { position ->
+            // TODO: complete this implementation later (show task details)
             tasksList?.let {
                 Toast.makeText(context, tasksList!![position].title, Toast.LENGTH_SHORT).show()
             }
         }
+        adapter.onTaskDeleteClickListener = TasksAdapter.OnTaskClickListener { position ->
+            deleteTask(tasksList?.get(position))
+            adapter.notifyItemRemoved(position)
+        }
         binding.tasksRecycler.adapter = adapter
+
+        loadTasks()
         tasksList?.size?.let { adapter.notifyItemRangeInserted(0, it) }
+    }
+
+    private fun deleteTask(task: Task?) {
+        task?.toTaskEntity()?.let {
+            AppDatabase.getInstance(requireContext().applicationContext)
+                .tasksDao()
+                .deleteTask(it)
+            tasksList?.remove(task)
+            adapter.tasksList?.remove(task)
+        }
     }
 
     fun loadTasks() {
