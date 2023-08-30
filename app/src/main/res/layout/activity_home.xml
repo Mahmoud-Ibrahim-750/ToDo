@@ -7,8 +7,9 @@
     tools:context=".ui.home.HomeActivity">
 
     <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
-        android:layout_height="128dp"
+        android:layout_height="?attr/actionBarSize"
         app:liftOnScroll="true">
 
         <com.google.android.material.appbar.MaterialToolbar
@@ -21,16 +22,44 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <!-- TODO: check the bottom margin problem later -->
-    <FrameLayout
-        android:id="@+id/fragment_container"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/light_green"
-        android:layout_marginBottom="?attr/actionBarSize"
-        android:paddingTop="40dp"
-        android:paddingHorizontal="16dp"
-        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior" />
+        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
+
+<!--      TODO: what about the background idea?-->
+        <com.kizitonwose.calendar.view.WeekCalendarView
+            android:id="@+id/calendarView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cv_weekHeaderResource="@layout/calendar_month_header"
+            app:cv_dayViewResource="@layout/item_calendar_day"
+            app:cv_daySize="seventhWidth"
+            app:cv_scrollPaged="true"
+            android:background="@drawable/shape_calendar_background"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/fragment_container"
+            tools:listitem="@layout/item_calendar_day"
+            android:orientation="horizontal"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            />
+
+        <FrameLayout
+            android:id="@+id/fragment_container"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:background="@color/light_green"
+            android:layout_marginBottom="?attr/actionBarSize"
+            android:paddingTop="40dp"
+            android:paddingHorizontal="16dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/calendarView"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <com.google.android.material.bottomappbar.BottomAppBar
         android:id="@+id/bottom_app_bar"
