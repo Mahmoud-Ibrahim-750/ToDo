@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--the height has a 25dp increase for the header-->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@color/blue" />
+    <item android:top="71dp" android:drawable="@color/light_green" />
+</layer-list>

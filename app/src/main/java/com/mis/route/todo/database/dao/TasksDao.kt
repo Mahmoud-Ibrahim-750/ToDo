@@ -21,6 +21,9 @@ interface TasksDao {
     @Query("SELECT * FROM Tasks")
     fun getAll(): MutableList<TaskEntity>
 
+    @Query("SELECT * FROM Tasks WHERE date LIKE :dayDate")
+    fun getTasksByDate(dayDate: String): MutableList<TaskEntity>
+
     @Query("SELECT * FROM Tasks WHERE id LIKE :taskId")
     fun getTaskById(taskId: Int): TaskEntity
 }

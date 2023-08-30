@@ -1,5 +1,6 @@
 package com.mis.route.todo.ui.home.fragments.tasks
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -26,7 +27,7 @@ class TasksListFragment : Fragment() {
         return binding.root
     }
 
-    private var tasksList : MutableList<Task>? = null
+    private var tasksList: MutableList<Task>? = null
     private val adapter = TasksAdapter(null)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -37,48 +38,54 @@ class TasksListFragment : Fragment() {
             }
         }
 
-        adapter.onTaskDeleteClickListener = TasksAdapter.OnTaskClickListener { position ->
-            deleteTask(tasksList?.get(position))
-            adapter.notifyItemRemoved(position)
+        adapter.onTaskDeleteButtonClickListener = TasksAdapter.OnTaskClickListener { position ->
+            tasksList?.let {
+                deleteTask(tasksList!![position])
+                adapter.notifyItemRemoved(position)
+            }
         }
 
-        adapter.onTaskCheckedClickListener = TasksAdapter.OnTaskClickListener { position ->
+        adapter.onTaskCheckButtonClickListener = TasksAdapter.OnTaskClickListener { position ->
             tasksList?.let {
-                val newTask = tasksList!![position]
-                newTask.status = Constants.COMPLETE
-                AppDatabase.getInstance(requireContext().applicationContext)
-                    .tasksDao().updateTask(newTask.toTaskEntity())
-                tasksList!![position] = newTask
-                adapter.tasksList!![position] = newTask
+                completeTaskAt(position)
                 adapter.notifyItemChanged(position)
             }
         }
         binding.tasksRecycler.adapter = adapter
 
-        loadTasks()
-        tasksList?.size?.let { adapter.notifyItemRangeInserted(0, it) }
+        val todayDate = Constants.getTodayDate()
+        loadTasksByDateAndNotifyAdapter(todayDate)
     }
 
-    private fun deleteTask(task: Task?) {
-        task?.toTaskEntity()?.let {
-            AppDatabase.getInstance(requireContext().applicationContext)
-                .tasksDao()
-                .deleteTask(it)
-            tasksList?.remove(task)
-            adapter.tasksList?.remove(task)
-        }
+    private fun completeTaskAt(position: Int) {
+        val task = tasksList!![position]
+        task.status = Constants.COMPLETE
+        AppDatabase.getInstance(requireContext().applicationContext)
+            .tasksDao().updateTask(task.toTaskEntity())
+        tasksList!![position] = task
+        adapter.tasksList!![position] = task
     }
 
-    fun loadTasks() {
+    private fun deleteTask(task: Task) {
+        AppDatabase.getInstance(requireContext().applicationContext)
+            .tasksDao()
+            .deleteTask(task.toTaskEntity())
+        tasksList?.remove(task)
+        adapter.tasksList?.remove(task)
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    fun loadTasksByDateAndNotifyAdapter(date: String) {
         tasksList = context?.let {
             AppDatabase.getInstance(it.applicationContext)
                 .tasksDao()
-                .getAll().toTaskList()
+                .getTasksByDate(date).toTaskList()
         }
         adapter.tasksList = tasksList
+        adapter.notifyDataSetChanged()
     }
 
     fun notifyTaskInsertionAtRear() {
-        adapter.notifyItemInserted(tasksList!!.size - 1 )
+        adapter.notifyItemInserted(tasksList!!.size - 1)
     }
 }
