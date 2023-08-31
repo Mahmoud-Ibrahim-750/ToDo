@@ -1,6 +1,7 @@
 package com.mis.route.todo.database
 
 import android.content.Context
+import com.mis.route.todo.Constants
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
@@ -11,9 +12,8 @@ import com.mis.route.todo.database.model.TaskEntity
 abstract class AppDatabase : RoomDatabase() {
     abstract fun tasksDao() : TasksDao
 
-    // TODO: apply singleton pattern here
-    // TODO: explain?
-    //semafore
+    // TODO: apply singleton pattern here, explain?
+    // TODO: SEARCH for semafore
     companion object {
         @Volatile
         private var INSTANCE: AppDatabase? = null
@@ -26,7 +26,7 @@ abstract class AppDatabase : RoomDatabase() {
                     instance = Room.databaseBuilder(
                         context.applicationContext,
                         AppDatabase::class.java,
-                        "ToDoAppDatabase"
+                        Constants.DATABASE_NAME
                     )
                         .allowMainThreadQueries()
                         .fallbackToDestructiveMigration()
