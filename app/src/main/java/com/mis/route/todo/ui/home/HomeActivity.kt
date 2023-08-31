@@ -12,6 +12,7 @@ import com.kizitonwose.calendar.core.firstDayOfWeekFromLocale
 import com.kizitonwose.calendar.view.WeekDayBinder
 import com.kizitonwose.calendar.view.WeekHeaderFooterBinder
 import com.mis.route.todo.Constants
+import com.mis.route.todo.Constants.formatLocalDate
 import com.mis.route.todo.R
 import com.mis.route.todo.databinding.ActivityHomeBinding
 import com.mis.route.todo.ui.home.calendar.DayViewContainer
@@ -189,5 +190,13 @@ class HomeActivity : AppCompatActivity() {
             @Suppress("DEPRECATION")
             binding.root.context.resources.getColor(colorId)
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        // reload tasks to reflect changes that may have occurred
+        val tasksListFragment = supportFragmentManager
+            .findFragmentByTag(Constants.TASKS_LIST_FRAGMENT_TAG) as TasksListFragment
+        tasksListFragment.loadTasksByDateAndNotifyAdapter(selectedDate.formatLocalDate())
     }
 }

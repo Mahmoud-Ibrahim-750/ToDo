@@ -56,7 +56,7 @@ class TasksAdapter(var tasksList: MutableList<Task>?) : RecyclerView.Adapter<Tas
             val task = tasksList!![position]
             holder.bindViews(task)
 
-            holder.binding.root.setOnClickListener { onTaskItemClickListener.onClick(position) }
+            holder.binding.draggableView.setOnClickListener { onTaskItemClickListener.onClick(position) }
             holder.binding.checkButton.setOnClickListener { onTaskCheckButtonClickListener.onClick(position) }
             holder.binding.deleteView.setOnClickListener { onTaskDeleteButtonClickListener.onClick(position) }
         }

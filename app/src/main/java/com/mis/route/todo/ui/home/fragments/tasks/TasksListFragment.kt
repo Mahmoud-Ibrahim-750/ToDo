@@ -1,16 +1,17 @@
 package com.mis.route.todo.ui.home.fragments.tasks
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.mis.route.todo.Constants
 import com.mis.route.todo.database.AppDatabase
 import com.mis.route.todo.database.model.TaskEntity.Companion.toTaskList
 import com.mis.route.todo.databinding.FragmentTasksListBinding
+import com.mis.route.todo.ui.edit.EditTaskActivity
 import com.mis.route.todo.ui.home.fragments.tasks.adapter.TasksAdapter
 import com.mis.route.todo.ui.home.fragments.tasks.model.Task
 import com.mis.route.todo.ui.home.fragments.tasks.model.Task.Companion.toTaskEntity
@@ -32,9 +33,10 @@ class TasksListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         adapter.onTaskItemClickListener = TasksAdapter.OnTaskClickListener { position ->
-            // TODO: complete this implementation later (show task details)
             tasksList?.let {
-                Toast.makeText(context, tasksList!![position].title, Toast.LENGTH_SHORT).show()
+                val intent = Intent(context, EditTaskActivity::class.java)
+                intent.putExtra(Constants.EDIT_TASK_ACTIVITY_OBJECT_KEY, tasksList!![position])
+                startActivity(intent)
             }
         }
 
@@ -47,8 +49,10 @@ class TasksListFragment : Fragment() {
 
         adapter.onTaskCheckButtonClickListener = TasksAdapter.OnTaskClickListener { position ->
             tasksList?.let {
-                completeTaskAt(position)
-                adapter.notifyItemChanged(position)
+                if (position < tasksList!!.size) {
+                    completeTaskAt(position)
+                    adapter.notifyItemChanged(position)
+                }
             }
         }
         binding.tasksRecycler.adapter = adapter
