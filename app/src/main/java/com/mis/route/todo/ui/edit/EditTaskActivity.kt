@@ -1,8 +1,10 @@
 package com.mis.route.todo.ui.edit
 
+import android.app.Activity
 import android.app.DatePickerDialog
 import android.os.Build
 import android.os.Bundle
+import android.view.inputmethod.InputMethodManager
 import android.widget.ArrayAdapter
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
@@ -11,6 +13,7 @@ import com.mis.route.todo.Constants
 import com.mis.route.todo.R
 import com.mis.route.todo.database.AppDatabase
 import com.mis.route.todo.database.model.TaskEntity
+import com.mis.route.todo.database.model.TaskEntity.Companion.toTask
 import com.mis.route.todo.databinding.ActivityEditTaskBinding
 import com.mis.route.todo.ui.home.fragments.tasks.model.Task
 
@@ -34,12 +37,33 @@ class EditTaskActivity : AppCompatActivity() {
         binding.dateSelector.setOnClickListener { showDatePickerDialog() }
 
         binding.saveTaskChangesButton.setOnClickListener {
+            hideKeyboard()
             if (validateChanges(task)) {
-                updateTask(task)
-                Snackbar.make(this, binding.root, "Task Updated Successfully!",
-                    Snackbar.LENGTH_SHORT).show()
+                task = updateTask(task)?.toTask() // just in case user tries updating again
+                Snackbar.make(
+                    this, binding.root, "Task Updated Successfully!",
+                    Snackbar.LENGTH_SHORT
+                ).show()
+            } else {
+                Snackbar.make(this, binding.root, "No changes to save", Snackbar.LENGTH_SHORT)
+                    .show()
             }
         }
+    }
+
+    // compare the syntax, no nesting level
+//    private fun hideKeyboard() {
+//        val view = this.currentFocus
+//        view?.let {
+//            val inputMethodManager = getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+//            inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
+//        }
+//    }
+
+    private fun hideKeyboard() {
+        val view = this.currentFocus ?: return // if view is null, return
+        val inputMethodManager = getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+        inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
     }
 
     private fun setupStatusExposedDropdown() {
@@ -48,16 +72,19 @@ class EditTaskActivity : AppCompatActivity() {
         binding.taskStatusInput.setAdapter(adapter)
     }
 
-    private fun updateTask(task: Task?) {
+    private fun updateTask(task: Task?): TaskEntity? {
         task?.let {
+            val entity = TaskEntity(
+                id = task.id,
+                title = binding.taskTitleInput.text.toString(),
+                date = binding.dateSelector.text.toString(),
+                status = binding.taskStatusInput.text.toString()
+            )
             AppDatabase.getInstance(this).tasksDao()
-                .updateTask(TaskEntity(
-                    id = task.id,
-                    title = binding.taskTitleInput.text.toString(),
-                    date = binding.dateSelector.text.toString(),
-                    status = binding.taskStatusInput.text.toString()
-                ))
+                .updateTask(entity)
+            return entity
         }
+        return null
     }
 
     private fun retrieveTask(): Task? {
@@ -79,24 +106,13 @@ class EditTaskActivity : AppCompatActivity() {
     }
 
     private fun validateChanges(task: Task?): Boolean {
-        // TODO: to be fixed later
-//        var isChangedCount = 3
-//        task?.let {
-//            if (binding.taskTitleInput.text!!.toString() == task.title) {
-//                binding.taskTitleInput.error = "No change to save"
-//                isChangedCount--
-//            }
-//            if (binding.taskStatusInput.text.toString() == task.status) {
-//                binding.taskStatusInput.error = "No change to save"
-//                isChangedCount--
-//            } else if (binding.taskStatusInput.error != null) binding.taskStatusInput.error = null
-//            if (binding.dateSelector.text.toString() == task.date) {
-//                binding.dateSelector.error = "No change to save"
-//                isChangedCount--
-//            }
-//        }
-//        return isChangedCount != 0
-        return true
+        var isChanged = false
+        task?.let {
+            isChanged = (binding.taskTitleInput.text!!.toString() != task.title) ||
+                        (binding.taskStatusInput.text.toString() != task.status) ||
+                        (binding.dateSelector.text.toString() != task.date)
+        }
+        return isChanged
     }
 
     // TODO: this fun is duplicated (add task bottom sheet), is there something to be done about that?

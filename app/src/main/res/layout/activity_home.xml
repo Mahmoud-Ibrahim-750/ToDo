@@ -10,15 +10,17 @@
         android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
+        android:background="#FFFFFF"
         app:liftOnScroll="true">
 
         <com.google.android.material.appbar.MaterialToolbar
-            android:id="@+id/topAppBar"
+            android:id="@+id/toolbar"
             style="@style/Widget.MaterialComponents.Toolbar.Primary"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:elevation="0dp"
-            app:title="@string/to_do_list" />
+            app:title="@string/tasks_list_title"
+            />
 
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -27,37 +29,50 @@
         android:layout_height="match_parent"
         app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
 
-<!--      TODO: what about the background idea?-->
-        <com.kizitonwose.calendar.view.WeekCalendarView
-            android:id="@+id/calendarView"
+        <LinearLayout
+            android:id="@+id/header_area"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:cv_weekHeaderResource="@layout/calendar_month_header"
-            app:cv_dayViewResource="@layout/item_calendar_day"
-            app:cv_daySize="seventhWidth"
-            app:cv_scrollPaged="true"
-            android:background="@drawable/shape_calendar_background"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/fragment_container"
-            tools:listitem="@layout/item_calendar_day"
             android:orientation="horizontal"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            />
+            app:layout_constraintBottom_toTopOf="@id/fragment_container"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <View
+                android:id="@+id/action_bar_separator"
+                android:layout_width="match_parent"
+                android:layout_height="71dp"
+                android:background="@color/md_theme_light_primary"
+                android:visibility="gone" />
+
+            <com.kizitonwose.calendar.view.WeekCalendarView
+                android:id="@+id/calendarView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/shape_calendar_background"
+                android:orientation="horizontal"
+                app:cv_daySize="seventhWidth"
+                app:cv_dayViewResource="@layout/item_calendar_day"
+                app:cv_scrollPaged="true"
+                app:cv_weekHeaderResource="@layout/calendar_month_header"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:listitem="@layout/item_calendar_day" />
+
+        </LinearLayout>
 
         <FrameLayout
             android:id="@+id/fragment_container"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:background="@color/light_green"
             android:layout_marginBottom="?attr/actionBarSize"
-            android:paddingTop="40dp"
+            android:background="@android:color/transparent"
             android:paddingHorizontal="16dp"
-            app:layout_constraintStart_toStartOf="parent"
+            android:paddingTop="40dp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/calendarView"
-            app:layout_constraintBottom_toBottomOf="parent"/>
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/header_area" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -65,9 +80,9 @@
         android:id="@+id/bottom_app_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
         app:contentInsetStart="0dp"
-        app:elevation="8dp"
-        android:layout_gravity="bottom">
+        app:elevation="8dp">
 
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/bottom_nav_view"
@@ -76,18 +91,18 @@
             android:layout_height="wrap_content"
             android:background="@android:color/transparent"
             app:elevation="0dp"
-            app:menu="@menu/bottom_nav_tabs_menu"/>
+            app:menu="@menu/bottom_nav_tabs_menu" />
     </com.google.android.material.bottomappbar.BottomAppBar>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/add_task_fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_add_24"
-        android:backgroundTint="@color/blue"
-        app:borderWidth="3dp"
         android:background="@color/white"
-        app:layout_anchor="@id/bottom_app_bar"
-        android:contentDescription="@string/same_description" />
+        android:backgroundTint="@color/blue"
+        android:contentDescription="@string/same_description"
+        android:src="@drawable/ic_add_24"
+        app:borderWidth="3dp"
+        app:layout_anchor="@id/bottom_app_bar" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -11,6 +11,10 @@ object Constants {
     const val ADD_TASK_BOTTOM_SHEET_FRAGMENT_TAG = "AddTaskBottomSheetFragment"
     const val EDIT_TASK_ACTIVITY_OBJECT_KEY = "EditTaskActivityObjectKey"
 
+    // Languages Codes
+    const val ENGLISH_CODE = "en"
+    const val ARABIC_CODE = "ar"
+
     // Database
     const val DATABASE_NAME = "ToDoAppDatabase"
 

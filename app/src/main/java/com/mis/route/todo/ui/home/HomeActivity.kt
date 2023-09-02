@@ -1,9 +1,9 @@
 package com.mis.route.todo.ui.home
 
-import android.os.Build
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.kizitonwose.calendar.core.Week
 import com.kizitonwose.calendar.core.WeekDay
@@ -49,6 +49,7 @@ class HomeActivity : AppCompatActivity() {
                     else -> SettingsFragment()
                 }
             )
+            initViews(it.itemId)
             true
         }
 
@@ -71,9 +72,9 @@ class HomeActivity : AppCompatActivity() {
                 // Show the month dates. Remember that views are reused!
                 val colorResId: Int =
                     if (container.day.date == selectedDate) R.color.blue else R.color.black
-                val color = getColorFromResource(colorResId)
-                container.calendarDayNumber.setTextColor(color)
-                container.calendarDayName.setTextColor(color)
+
+                container.calendarDayNumber.setTextColor(ContextCompat.getColor(this@HomeActivity, colorResId))
+                container.calendarDayName.setTextColor(ContextCompat.getColor(this@HomeActivity, colorResId))
 
                 monthName = data.date.month.toString() // for use outside (in header)
                 year = data.date.year.toString()
@@ -86,8 +87,7 @@ class HomeActivity : AppCompatActivity() {
         // calendar month header binder
         binding.calendarView.weekHeaderBinder =
             object : WeekHeaderFooterBinder<MonthHeaderViewContainer> {
-                override fun create(view: View): MonthHeaderViewContainer =
-                    MonthHeaderViewContainer(view)
+                override fun create(view: View) = MonthHeaderViewContainer(view)
 
                 override fun bind(container: MonthHeaderViewContainer, data: Week) {
                     container.calendarMonthTitle.text = calendarHeaderTitle
@@ -102,35 +102,6 @@ class HomeActivity : AppCompatActivity() {
         val firstDayOfWeek = firstDayOfWeekFromLocale()
         binding.calendarView.setup(startDate, endDate, firstDayOfWeek)
         binding.calendarView.scrollToWeek(currentDate)
-
-        // TODO: check what is wrong here?
-        /*
-//        binding.calendarView.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
-//            // this method adds a listener that gets called when the global layout state changes,
-//            // ensuring that you're getting the correct height after the layout is complete.
-//
-//            override fun onGlobalLayout() {
-//                val lightGreenColor = ContextCompat.getColor(this@HomeActivity, R.color.light_green)
-//                val blueColor = ContextCompat.getColor(this@HomeActivity, R.color.blue)
-//
-//                val halfHeight = binding.calendarView.height / 2
-//                Log.d("tt", halfHeight.toString())
-//
-//                val lightGreenDrawable = ColorDrawable(lightGreenColor)
-//                lightGreenDrawable.setBounds(0, 0, binding.calendarView.width, halfHeight)
-//
-//                val blueDrawable = ColorDrawable(blueColor)
-//                blueDrawable.setBounds(0, halfHeight, binding.calendarView.width, binding.calendarView.height)
-//
-//                val layerDrawable = LayerDrawable(arrayOf(lightGreenDrawable, blueDrawable))
-//                binding.fragmentContainer.background = layerDrawable
-//
-//                // The removeOnGlobalLayoutListener method is used to remove the listener
-//                // after it's been used once.
-//                binding.calendarView.viewTreeObserver.removeOnGlobalLayoutListener(this)
-//            }
-//        })
-        */
     }
 
     private fun selectDayAndLoadTasks(container: DayViewContainer, date: String) {
@@ -181,15 +152,33 @@ class HomeActivity : AppCompatActivity() {
             .commit()
     }
 
-    // TODO: is this correct? to handle deprecation
-    private fun getColorFromResource(colorId: Int): Int {
-        val theme = binding.root.context.theme
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            binding.root.context.resources.getColor(colorId, theme)
-        } else {
-            @Suppress("DEPRECATION")
-            binding.root.context.resources.getColor(colorId)
+    private fun initViews(fragmentId: Int) {
+        setActivityTitle(fragmentId)
+        toggleCalendarVisibility(fragmentId)
+        toggleSeparatorVisibility(fragmentId)
+    }
+
+    private fun toggleSeparatorVisibility(fragmentId: Int) {
+        binding.actionBarSeparator.visibility = when (fragmentId) {
+            R.id.tasks_nav -> View.GONE
+            else -> View.VISIBLE
         }
+    }
+
+    private fun toggleCalendarVisibility(fragmentId: Int) {
+        binding.calendarView.visibility = when (fragmentId) {
+            R.id.tasks_nav -> View.VISIBLE
+            else -> View.GONE
+        }
+    }
+
+    private fun setActivityTitle(fragmentId: Int) {
+        binding.toolbar.title = resources.getString(
+            when (fragmentId) {
+                R.id.tasks_nav -> R.string.tasks_list_title
+                else -> R.string.settings_title
+            }
+        )
     }
 
     override fun onResume() {
