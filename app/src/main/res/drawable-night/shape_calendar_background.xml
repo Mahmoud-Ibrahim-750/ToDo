@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--the height has a 25dp increase for the header-->
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:drawable="@color/md_theme_light_primary" />
-    <item android:top="71dp" android:drawable="@color/light_background" />
+    <item android:drawable="@color/md_theme_dark_primary" />
+    <item android:top="71dp" android:drawable="@color/dark_background" />
 </layer-list>

@@ -92,4 +92,11 @@ class TasksListFragment : Fragment() {
     fun notifyTaskInsertionAtRear() {
         adapter.notifyItemInserted(tasksList!!.size - 1)
     }
+
+    override fun onResume() {
+        super.onResume()
+        // reload task again
+        val todayDate = Constants.getTodayDate()
+        loadTasksByDateAndNotifyAdapter(todayDate)
+    }
 }

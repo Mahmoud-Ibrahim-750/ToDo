@@ -2,10 +2,10 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item android:id="@+id/tasks_nav"
-        android:title="@string/tasks_list"
+        android:title="@string/tasks_list_title"
         android:icon="@drawable/ic_list"/>
 
     <item android:id="@+id/settings_nav"
-        android:title="@string/settings"
+        android:title="@string/settings_title"
         android:icon="@drawable/ic_settings"/>
 </menu>
