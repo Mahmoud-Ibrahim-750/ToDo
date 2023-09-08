@@ -1,12 +1,23 @@
 <resources>
     <string name="app_name">ToDo</string>
-    <string name="to_do_list">To Do List</string>
-    <string name="same_description">Just a description</string>
-    <string name="supervised_text">Supervised by Muhammad Nabil</string>
-    <string name="tasks_list">Tasks List</string>
-    <string name="settings">Settings</string>
+    <string name="to_do_list" translatable="false">To Do List</string>
+    <string name="same_description" translatable="false">Just a description</string>
+    <string name="supervised_text" translatable="false">Supervised by Muhammad Nabil</string>
+    <string name="tasks_list_title">Tasks List</string>
+    <string name="settings_title">Settings</string>
     <string name="add_new_task">Add New Task</string>
     <string name="task_name">Task Name</string>
     <string name="date">Date:</string>
     <string name="add_task">Add Task</string>
+    <string name="delete" translatable="false">delete</string>
+    <string name="edit_task">Edit Task</string>
+    <string name="task_title">Task Title</string>
+    <string name="task_status">Task Status</string>
+    <string name="save_changes">Save Changes</string>
+    <string name="language">Language</string>
+    <string name="mode">Mode</string>
+    <string name="english_language">English</string>
+    <string name="arabic_language">Arabic</string>
+    <string name="light_mode">Light</string>
+    <string name="dark_mode">Dark</string>
 </resources>

@@ -1,4 +1,4 @@
-package com.mis.route.todo.ui.home
+package com.mis.route.todo.ui.home.fragments.tasks
 
 import android.app.DatePickerDialog
 import android.os.Build
@@ -7,18 +7,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
-import androidx.core.content.ContentProviderCompat.requireContext
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.mis.route.todo.Constants
 import com.mis.route.todo.database.AppDatabase
 import com.mis.route.todo.database.model.TaskEntity
+import com.mis.route.todo.database.model.TaskEntity.Companion.toTask
 import com.mis.route.todo.databinding.BottomSheetAddTaskBinding
-import java.text.SimpleDateFormat
-import java.util.Calendar
-import java.util.Locale
+import com.mis.route.todo.ui.home.fragments.tasks.model.Task
 
 class AddTaskBottomSheet : BottomSheetDialogFragment() {
-    lateinit var binding: BottomSheetAddTaskBinding
+    private lateinit var binding: BottomSheetAddTaskBinding
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -43,15 +41,28 @@ class AddTaskBottomSheet : BottomSheetDialogFragment() {
         binding.dateSelector.setOnClickListener {
             showDatePickerDialog()
         }
+
         binding.addTaskButton.setOnClickListener {
-            addTask()
+            if (!invalidateInput()) return@setOnClickListener
+            val addedTask = createAndAddTask()
+            onTaskAddedListener.onTaskAdded(addedTask) // to reload tasks (to notify the adapter)
+            dismiss()
         }
     }
 
+    private fun createAndAddTask(): Task {
+        val newTaskEntity = TaskEntity(
+            title = binding.inputTaskTitle.text.toString(),
+            date = binding.dateSelector.text.toString(),
+            status = Constants.INCOMPLETE)
+        AppDatabase.getInstance(requireContext().applicationContext)
+            .tasksDao().addTask(newTaskEntity)
+        return newTaskEntity.toTask()
+    }
+
     private fun displayCurrentDate() {
-        val formatter = SimpleDateFormat("dd-M-yyyy", Locale.US)
-        val currentDate = Calendar.getInstance(Locale.US).time
-        binding.dateSelector.text = formatter.format(currentDate)
+        val todayDate = Constants.getTodayDate()
+        binding.dateSelector.text = todayDate
     }
 
     @RequiresApi(Build.VERSION_CODES.N)
@@ -64,15 +75,9 @@ class AddTaskBottomSheet : BottomSheetDialogFragment() {
         datePickerDialog.show()
     }
 
-    private fun addTask() {
-        if (invalidateInput()) {
-            AppDatabase.getInstance(requireContext().applicationContext)
-                .tasksDao().addTask(
-                    TaskEntity(
-                        title = binding.inputTaskTitle.text.toString(),
-                        date = binding.dateSelector.text.toString(),
-                        status = Constants.INCOMPLETE))
-        }
-        dismiss()
+    lateinit var onTaskAddedListener: OnTaskAddedListener
+
+    fun interface OnTaskAddedListener {
+        fun onTaskAdded(task: Task)
     }
 }
